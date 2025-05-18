@@ -1,10 +1,7 @@
-import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 import sys
-import re
-from collections import deque
 import pprint
 # Moodle Information
 url = "https://moodle.nu.edu.kz"
@@ -343,6 +340,7 @@ for course_link in course_linklist:
             row_pos += 1
             continue
         
+        # Check if level is correct
         row_level = row_heading.get_attribute('class').find("level")
         row_level += 5
         row_level = int(row_heading.get_attribute('class')[row_level])
