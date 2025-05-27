@@ -12,12 +12,16 @@ url = "https://moodle.nu.edu.kz"
 user_data = {
     'username' : '',
     'password' : ''
-} # DB is needed
+}
+
 url_login = f'{url}/login/index.php'
 url_my = f'{url}/my/'
 url_course = f'{url_my}courses.php'
+
+
 driver = webdriver.Chrome()
 driver.get(url_login)
+
 
 # Selenium Driver Activation
 username = driver.find_element(By.ID, "username")
@@ -82,7 +86,7 @@ for course_link in course_linklist:
     url_grade = f'{url}/grade/report/user/index.php?id={course_id}'
     driver.get(url_grade)
     time.sleep(2)
-
+    print(url_grade)
     #
     # Maybe I should save grades as a tree (with depth of 3), idk if it would be useful in advance, but mb I should try
     #
@@ -106,6 +110,7 @@ for course_link in course_linklist:
         # Turnitin Assessment (turnitintooltwo)
         # Attendance (attendance) 
         # Assign (assign)
+        # Task (monologo)
         # Total Mean/Grade (agg_mean, agg_sum; useless should be deleted)
         # Types of grades (with class name):
         # Manual item (fa-pencil-square-o)
@@ -131,6 +136,8 @@ for course_link in course_linklist:
                 grade_type = "assign"
             elif "agg_mean" in grade_type or "agg_sum" in grade_type:
                 grade_type = "total"
+            elif "monologo" in grade_type:
+                grade_type = "task"
             else:
                 grade_type = "useless"
         else:
@@ -138,7 +145,7 @@ for course_link in course_linklist:
             # Manual item (fa-pencil-square-o) = 'manual'
             span_list = row_heading.find_elements(By.TAG_NAME, 'span')
             if len(span_list) == 2:
-                if ("gradeitemheader" in span_list[1].get_attribute('class')) and ("fa-pencil-square-o" in row_heading.find_element(By.TAG_NAME, 'i').get_attribute('class')):
+                if ("gradeitemheader" in span_list[1].get_attribute('class')) and (("fa-pencil-square-o" in row_heading.find_element(By.TAG_NAME, 'i').get_attribute('class')) or ("fa-pen-to-square" in row_heading.find_element(By.TAG_NAME, 'i').get_attribute('class'))):
                     grade_type = "manual"
                 else:
                     grade_type = "useless"
@@ -151,7 +158,7 @@ for course_link in course_linklist:
         if grade_type == "useless":
             row_pos += 1
             continue
-        
+        print(grade_type)
         #
         # My obesvations:
         # Table is nested with 3 levels:
@@ -224,18 +231,27 @@ for course_link in course_linklist:
         except:
             grade_points = grade_info[1].get_attribute('innerHTML')
 
-        if grade_points == "-":
-            grade_points = 0.0
-        elif grade_points != "Pass" and grade_points != "Fail":
+        if grade_points[0].isdigit():
             grade_points = grade_points.replace(',', '.')
             grade_points = float(grade_points)
 
-        grade_range = 0
-        if isinstance(grade_points, float):
-            grade_range = grade_info[2].get_attribute('innerHTML')
+        grade_range = grade_info[2].get_attribute('innerHTML')
+        if grade_range[0].isdigit():
             grade_range = grade_range[grade_range.find("–") + 1:]
             grade_range = int(grade_range)
+            if grade_points == "-":
+                grade_points = 0.0
+        else: 
+            if grade_range[0] == 'F':
+                if grade_points == "-":
+                    row_pos += 1
+                    continue
+            else:
+                row_pos += 1
+                continue
+                
 
+        print(f"==={grade_points, grade_range, grade_type}")
         # Grade
         grade = Grade(grade_points, grade_range, grade_type)
         if len(group_stack) == 1:
