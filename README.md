@@ -21,7 +21,7 @@ This platform is not convenient for me at all. You need to log in every time you
 
 ```
 Programming language: Python 3.13+
-Data fetching: Selenium (Web Scraping, NOT Moodle API)
+Data fetching: Selenium (Web Scraping)
 Syllabus: pdfplumber
 Bot platform: Telegram (Telegram API)
 DB: (?)
@@ -34,7 +34,7 @@ Statistics: matplotlib, numpy (Not finished)
 > I don't have experience in building architectures, so it might be wrong
 
 [ User ]
-  - v
+  - v 
 [ Telegram Bot ]
   - v           \
 [ DB ]           \
