@@ -4,14 +4,17 @@ import time
 import sys
 import pprint
 import shrink
+import os
+from dotenv import load_dotenv, dotenv_values
 
+load_dotenv()
 
 # Moodle Information
 url = "https://moodle.nu.edu.kz"
 #Delete when git commit, .gitingore needed
 user_data = {
-    'username' : '',
-    'password' : ''
+    'username' : os.getenv("username"),
+    'password': os.getenv("password")
 }
 
 url_login = f'{url}/login/index.php'

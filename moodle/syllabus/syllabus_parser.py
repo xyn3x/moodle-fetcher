@@ -1,6 +1,9 @@
 from google import genai
 import pdfplumber
 import os
+from dotenv import load_dotenv, dotenv_values
+
+load_dotenv()
 
 pdf_file = "./moodle/syllabus/test_syllabus.pdf"
 
@@ -9,7 +12,7 @@ with pdfplumber.open(pdf_file) as pdf:
     for page in pdf.pages:
         extracted_text += page.extract_text()
 
-client = genai.Client(api_key="")
+client = genai.Client(api_key=os.getenv("genai_api"))
 
 response = client.models.generate_content(
     model="gemini-2.0-flash",
