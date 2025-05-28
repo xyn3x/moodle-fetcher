@@ -19,12 +19,14 @@ This platform is not convenient for me at all. You need to log in every time you
 
 ## Used technologies 
 
-- Programming language: Python 3.13+
-- Data fetching: Selenium (Web Scraping, ~Moodle API~)
-- Syllabus: pdfplumber
-- Bot platform: Telegram (Telegram API)
-- DB: (?)
-- Statistics: matplotlib, numpy (Not finished)
+```
+Programming language: Python 3.13+
+Data fetching: Selenium (Web Scraping, ~Moodle API~)
+Syllabus: pdfplumber
+Bot platform: Telegram (Telegram API)
+DB: (?)
+Statistics: matplotlib, numpy (Not finished)
+```
 
 ## Architecture
 
