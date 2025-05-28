@@ -21,7 +21,7 @@ This platform is not convenient for me at all. You need to log in every time you
 
 ```
 Programming language: Python 3.13+
-Data fetching: Selenium (Web Scraping, ~Moodle API~)
+Data fetching: Selenium (Web Scraping, NOT Moodle API)
 Syllabus: pdfplumber
 Bot platform: Telegram (Telegram API)
 DB: (?)
