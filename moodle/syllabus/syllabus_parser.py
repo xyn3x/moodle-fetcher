@@ -16,7 +16,7 @@ client = genai.Client(api_key=os.getenv("genai_api"))
 
 response = client.models.generate_content(
     model="gemini-2.0-flash",
-    contents=f"Give me the answer as a json file only. You need to analyze this text and give information of every assigment that affects the grade as a json file. Give information about assignment name, its weight and date (if none, then none). Also add info about attendance, also in json (maximum absence, and penalty as an object too, to easily read json). Here the texts itself:\n {extracted_text}",
+    contents=f"Give me the answer as a json only. You need to analyze this text and give information of every assigment that affects the grade as a json file. Give information about assignment name, its weight and date (if none, then NULL). Also add info about attendance, also in json (maximum absence, and penalty as an object too, to easily read json). Here the texts itself:\n {extracted_text}",
 )
 
 print(response.text)

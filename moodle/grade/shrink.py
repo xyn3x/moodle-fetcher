@@ -1,4 +1,3 @@
-
 #
 # There are a lot of backup or same assessments with another time. They haven't graded, so not needed
 # So, I should implement function that deletes unnecessary information in assessment links (such as Backup / 9-11am).
@@ -156,3 +155,4 @@ def delete_unneccessary(name):
         name = name[:-1]
     name = name.title()
     return name
+
