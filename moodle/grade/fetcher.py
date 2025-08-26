@@ -2,7 +2,6 @@ import time
 import sys
 import json
 from . import shrink
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 # Grade object
