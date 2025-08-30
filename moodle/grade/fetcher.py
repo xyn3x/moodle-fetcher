@@ -1,25 +1,8 @@
 import time
-import sys
-import json
 from . import shrink
 from selenium.webdriver.common.by import By
 
-# Grade object
-class Grade:
-    def __init__(self, grade, range, type, feedback=None):
-        self.grade = grade
-        if grade == "Pass":
-            self.range = ""
-        else: 
-            self.range = range
-        self.type = type
-        if not feedback:
-            self.feedback = ""
-        else: 
-            self.feedback = feedback
-
 grade_tree = {}
-
 
 # Fetcher
 def fetch_grades(driver, url, course_linklist):
@@ -40,7 +23,7 @@ def fetch_grades(driver, url, course_linklist):
         url_grade = f'{url}/grade/report/user/index.php?id={course_id}'
         driver.get(url_grade)
         time.sleep(2)
-        print(url_grade)
+        #print(url_grade)
         #
         # Maybe I should save grades as a tree (with depth of 3), idk if it would be useful in advance, but mb I should try
         #
@@ -112,7 +95,7 @@ def fetch_grades(driver, url, course_linklist):
             if grade_type == "useless":
                 row_pos += 1
                 continue
-            print(grade_type)
+            #print(grade_type)
             #
             # My obesvations:
             # Table is nested with 3 levels:
@@ -210,20 +193,31 @@ def fetch_grades(driver, url, course_linklist):
                     continue
                     
 
-            print(f"==={grade_points, grade_range, grade_type}")
+            #print(f"==={grade_points, grade_range, grade_type}")
             # Grade
-            grade = Grade(grade_points, grade_range, grade_type)
             if len(group_stack) == 1:
                 if grade_name in grade_tree[group_stack[-1]]:
-                    grade_tree[group_stack[-1]][grade_name].grade = max(grade_tree[group_stack[-1]][grade_name].grade, grade.grade)
-                else: 
-                    grade_tree[group_stack[-1]][grade_name] = grade
+                    grade_tree[group_stack[-1]][grade_name]['grade'] = max(grade_tree[group_stack[-1]][grade_name]['grade'], grade_points)
+                else:
+                    if grade_points == "Pass" or grade_points == "Fail":
+                        grade_range = "";
+                    grade_tree[group_stack[-1]][grade_name] = {}
+                    grade_tree[group_stack[-1]][grade_name].update({
+                                                                        'grade' : grade_points, 
+                                                                        'range' : grade_range, 
+                                                                        'type' : grade_type
+                                                                    })
             else:
                 if grade_name in grade_tree[group_stack[0]][group_stack[-1]]:
-                    grade_tree[group_stack[0]][group_stack[-1]][grade_name].grade = max(grade_tree[group_stack[0]][group_stack[-1]][grade_name].grade, grade.grade)
+                    grade_tree[group_stack[0]][group_stack[-1]][grade_name]['grade'] = max(grade_tree[group_stack[0]][group_stack[-1]][grade_name]['grade'], grade_points)
                 else: 
-                    grade_tree[group_stack[0]][group_stack[-1]][grade_name] = grade
+                    if grade_points == "Pass" or grade_points == "Fail":
+                        grade_range = "";
+                    grade_tree[group_stack[0]][group_stack[-1]][grade_name] = {}
+                    grade_tree[group_stack[0]][group_stack[-1]][grade_name].update({
+                                                                        'grade' : grade_points, 
+                                                                        'range' : grade_range, 
+                                                                        'type' : grade_type
+                                                                    })
             row_pos += 1
-
-    grade_json = json.dumps(grade_tree, default=vars, indent=4)
-    return grade_json
+    return grade_tree
