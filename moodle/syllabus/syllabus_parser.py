@@ -13,8 +13,6 @@ from selenium.common.exceptions import NoSuchElementException
 
 load_dotenv()
 
-syllabus_tree = {}
-
 def table_to_string(table):
     if not table:
         return ""
@@ -100,6 +98,7 @@ def ask(content):
     return response.text
 
 def parse_syllabus(driver, url, course_linklist):
+    syllabus_json = {}
     for course_link in course_linklist: 
         driver.get(course_link)
         time.sleep(2)
@@ -131,7 +130,7 @@ def parse_syllabus(driver, url, course_linklist):
                     response = ask(content)
                     response = response[7:-3].replace('\n', '')
                     response = json.loads(response)
-                    syllabus_tree.update({course_name : response})
+                    syllabus_json.update({course_name : response})
                 except: 
                     driver.get(cur_link.get_attribute("href"))
                     try:
@@ -152,7 +151,34 @@ def parse_syllabus(driver, url, course_linklist):
                             response = ask(content)
                             response = response[7:-3].replace('\n', '')
                             response = json.loads(response)
-                            syllabus_tree.update({course_name : response})
-    return syllabus_tree
+                            syllabus_json.update({course_name : response})
+    # removing duplicates 
+    modified_syllabus_json = {}
+    for key in syllabus_json.keys():
+        cur_name = ""
+        cmpname = 0
+        component_name = ""
+        for cur in key:
+            if cur == ",":
+                break
+            if cur == "-":
+                if cmpname:
+                    break
+                cmpname = 1
+                continue
+            if not cmpname: 
+                cur_name += cur
+            else:
+                component_name += cur
+        component_name = component_name.lower()
+        if cur_name in modified_syllabus_json.keys():
+            if "lab" in component_name:
+                continue
+            else: 
+                modified_syllabus_json[cur_name].update(syllabus_json[key])
+        else:
+            modified_syllabus_json.update({cur_name : syllabus_json[key]})
+    syllabus_json = json.dumps(modified_syllabus_json, indent=4)
+    return syllabus_json
 
 

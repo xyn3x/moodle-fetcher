@@ -56,43 +56,12 @@ course_linklist = list(set(course_linklist)) # Delete Duplicates
 
 if not course_linklist: 
     sys.exit("No course is found")
-
-grades_json = fetch_grades(driver, url, course_linklist)
+    
 try: 
     grades_json = fetch_grades(driver, url, course_linklist)
 except:
     print("Erorr. Can not fetch the grades.")
 
-# removing duplicates 
-modified_grades_json = {}
-for key in grades_json.keys():
-    cur_name = ""
-    cmpname = 0
-    component_name = ""
-    for cur in key:
-        if cur == ",":
-            break
-        if cur == "-":
-            if cmpname:
-                break
-            cmpname = 1
-            continue
-        if not cmpname: 
-            cur_name += cur
-        else:
-            component_name += cur
-    component_name = component_name.lower()
-    if cur_name in modified_grades_json.keys():
-        if "lab" in component_name:
-            for inner_key in grades_json[key].keys():
-                if inner_key == "Attendance":
-                    continue
-                modified_grades_json[cur_name].update({inner_key : grades_json[key][inner_key]})
-        else: 
-            modified_grades_json[cur_name].update(grades_json[key])
-    else:
-        modified_grades_json.update({cur_name : grades_json[key]})
-grades_json = json.dumps(modified_grades_json, indent=4)
 print(grades_json)
 
 try:
@@ -100,33 +69,5 @@ try:
 except:
     print("Erorr. Can not fetch the grades.")
 
-
-# removing duplicates 
-modified_syllabus_json = {}
-for key in syllabus_json.keys():
-    cur_name = ""
-    cmpname = 0
-    component_name = ""
-    for cur in key:
-        if cur == ",":
-            break
-        if cur == "-":
-            if cmpname:
-                break
-            cmpname = 1
-            continue
-        if not cmpname: 
-            cur_name += cur
-        else:
-            component_name += cur
-    component_name = component_name.lower()
-    if cur_name in modified_syllabus_json.keys():
-        if "lab" in component_name:
-            continue
-        else: 
-            modified_syllabus_json[cur_name].update(syllabus_json[key])
-    else:
-        modified_syllabus_json.update({cur_name : syllabus_json[key]})
-syllabus_json = json.dumps(modified_syllabus_json, indent=4)
 print(syllabus_json)
 driver.quit()

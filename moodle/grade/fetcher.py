@@ -1,11 +1,11 @@
 import time
+import json
 from . import shrink
 from selenium.webdriver.common.by import By
 
-grade_tree = {}
-
 # Fetcher
 def fetch_grades(driver, url, course_linklist):
+    grade_json = {}
     for course_link in course_linklist:
         # Course Id
         course_id = 0
@@ -121,9 +121,9 @@ def fetch_grades(driver, url, course_linklist):
                 cur_level += 1
                 group_stack.append(span_list[-1].get_attribute('innerHTML'))
                 if len(group_stack) == 1:
-                    grade_tree[group_stack[-1]] = {}
+                    grade_json[group_stack[-1]] = {}
                 else:
-                    grade_tree[group_stack[0]][group_stack[-1]] = {}
+                    grade_json[group_stack[0]][group_stack[-1]] = {}
                 row_pos += 1
                 continue
             
@@ -196,28 +196,58 @@ def fetch_grades(driver, url, course_linklist):
             #print(f"==={grade_points, grade_range, grade_type}")
             # Grade
             if len(group_stack) == 1:
-                if grade_name in grade_tree[group_stack[-1]]:
-                    grade_tree[group_stack[-1]][grade_name]['grade'] = max(grade_tree[group_stack[-1]][grade_name]['grade'], grade_points)
+                if grade_name in grade_json[group_stack[-1]]:
+                    grade_json[group_stack[-1]][grade_name]['grade'] = max(grade_json[group_stack[-1]][grade_name]['grade'], grade_points)
                 else:
                     if grade_points == "Pass" or grade_points == "Fail":
                         grade_range = "";
-                    grade_tree[group_stack[-1]][grade_name] = {}
-                    grade_tree[group_stack[-1]][grade_name].update({
+                    grade_json[group_stack[-1]][grade_name] = {}
+                    grade_json[group_stack[-1]][grade_name].update({
                                                                         'grade' : grade_points, 
                                                                         'range' : grade_range, 
                                                                         'type' : grade_type
                                                                     })
             else:
-                if grade_name in grade_tree[group_stack[0]][group_stack[-1]]:
-                    grade_tree[group_stack[0]][group_stack[-1]][grade_name]['grade'] = max(grade_tree[group_stack[0]][group_stack[-1]][grade_name]['grade'], grade_points)
+                if grade_name in grade_json[group_stack[0]][group_stack[-1]]:
+                    grade_json[group_stack[0]][group_stack[-1]][grade_name]['grade'] = max(grade_json[group_stack[0]][group_stack[-1]][grade_name]['grade'], grade_points)
                 else: 
                     if grade_points == "Pass" or grade_points == "Fail":
                         grade_range = "";
-                    grade_tree[group_stack[0]][group_stack[-1]][grade_name] = {}
-                    grade_tree[group_stack[0]][group_stack[-1]][grade_name].update({
+                    grade_json[group_stack[0]][group_stack[-1]][grade_name] = {}
+                    grade_json[group_stack[0]][group_stack[-1]][grade_name].update({
                                                                         'grade' : grade_points, 
                                                                         'range' : grade_range, 
                                                                         'type' : grade_type
                                                                     })
             row_pos += 1
-    return grade_tree
+    # removing duplicates 
+    modified_grades_json = {}
+    for key in grade_json.keys():
+        cur_name = ""
+        cmpname = 0
+        component_name = ""
+        for cur in key:
+            if cur == ",":
+                break
+            if cur == "-":
+                if cmpname:
+                    break
+                cmpname = 1
+                continue
+            if not cmpname: 
+                cur_name += cur
+            else:
+                component_name += cur
+        component_name = component_name.lower()
+        if cur_name in modified_grades_json.keys():
+            if "lab" in component_name:
+                for inner_key in grade_json[key].keys():
+                    if inner_key == "Attendance":
+                        continue
+                    modified_grades_json[cur_name].update({inner_key : grade_json[key][inner_key]})
+            else: 
+                modified_grades_json[cur_name].update(grade_json[key])
+        else:
+            modified_grades_json.update({cur_name : grade_json[key]})
+    grade_json = json.dumps(modified_grades_json, indent=4)
+    return grade_json
