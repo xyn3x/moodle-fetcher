@@ -1,5 +1,4 @@
 from moodle.grade.fetcher import fetch_grades
-import moodle.syllabus.syllabus_parser
 from moodle.syllabus.syllabus_parser import parse_syllabus
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -60,14 +59,15 @@ if not course_linklist:
 try: 
     grades_json = fetch_grades(driver, url, course_linklist)
 except:
-    print("Erorr. Can not fetch the grades.")
+    sys.exit("Erorr. Can not fetch the grades.")
 
 print(grades_json)
 
 try:
     syllabus_json = parse_syllabus(driver, url, course_linklist)    
 except:
-    print("Erorr. Can not fetch the grades.")
+    sys.exit("Erorr. Can not fetch the syllabus.")
+
 
 print(syllabus_json)
 driver.quit()

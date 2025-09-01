@@ -6,13 +6,15 @@ So, basically, it's a pet project that helps me get grades, deadlines, predicted
 This platform is not convenient for me at all. You need to log in every time you want to see your deadlines and grades (if they are available), and even if you are logged in, it logs you out automatically after some time.
 
 ## Facilities
-- Easy-to-use bot in Telegram
+- Easy-to-use bot in Telegram (? Future)
 - Moodle authorization and data fetching
 - Syllabus parsing
 - Deadline notifications (? Future)
 - Course grade analysis via graphs and statistics. (Not finished)
 - Grade prediction based on current grades and assessment weights. (Not finished)
-- Data storing in DB (? Future)
+- Data storing in DB (Not finished)
+- You can run this script in your computer with Docker (Only for NU Kazakhstan students)
+- Auto updating data 
 
 > [!NOTE]
 > Project is not finished yet. So there might be some changes
@@ -23,9 +25,10 @@ This platform is not convenient for me at all. You need to log in every time you
 Programming language: Python 3.13+
 Data fetching: Selenium (Web Scraping)
 Syllabus: pdfplumber
-Bot platform: Telegram (Telegram API)
-DB: (?)
+Bot platform: Telegram (Telegram API) (? Future)
+DB: (PostgreSQL)
 Statistics: matplotlib, numpy (Not finished)
+Update: cron (Not finished)
 ```
 
 ## Architecture

@@ -171,11 +171,10 @@ def parse_syllabus(driver, url, course_linklist):
             else:
                 component_name += cur
         component_name = component_name.lower()
+        if "lab" in component_name:
+            continue
         if cur_name in modified_syllabus_json.keys():
-            if "lab" in component_name:
-                continue
-            else: 
-                modified_syllabus_json[cur_name].update(syllabus_json[key])
+            modified_syllabus_json[cur_name].update(syllabus_json[key])
         else:
             modified_syllabus_json.update({cur_name : syllabus_json[key]})
     syllabus_json = json.dumps(modified_syllabus_json, indent=4)
