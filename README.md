@@ -35,15 +35,4 @@ Other: cron (Not finished), Docker (Not finished)
 
 > [!NOTE]
 > I don't have experience in building architectures, so it might be wrong
-
-[ User ]
-  - v 
-[ Telegram Bot ]
-  - v           \
-[ DB ]           \
-    ^             v
-    -----------[ App ]  ----> [ Syllabus Parser ]
-                 /     ^              v
-                /       \ --- [Statistics / Analyzer]
-               v                     ^
-        [ Grade Fetcher ]  -----------
+> Ok. I will finish it later.
