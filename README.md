@@ -24,7 +24,7 @@ This platform is not convenient for me at all. You need to log in every time you
 ```
 Programming language: Python 3.13+
 Data fetching: Selenium (Web Scraping)
-Syllabus: pdfplumber
+Syllabus: pdfplumber, docx, BeautifulSoup
 Bot platform: Telegram (Telegram API) (? Future)
 DB: (PostgreSQL)
 Statistics: matplotlib, numpy (Not finished)
