@@ -13,7 +13,7 @@ This platform is not convenient for me at all. You need to log in every time you
 - Course grade analysis via graphs and statistics. (Not finished)
 - Grade prediction based on current grades and assessment weights. (Not finished)
 - Data storing in DB (Not finished)
-- You can run this script in your computer with Docker (Only for NU Kazakhstan students)
+- You can run this script in your computer via Docker (Only for NU Kazakhstan students)
 - Auto updating data 
 
 > [!NOTE]

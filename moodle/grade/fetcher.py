@@ -159,10 +159,10 @@ def fetch_grades(driver, url, course_linklist):
             grade_info = row.find_elements(By.TAG_NAME, 'td')
             
             # Useless if it doesn't have persentage
-            if not grade_info[3].get_attribute('innerHTML'):
+            if not grade_info[3].get_attribute('innerHTML') or "-" in grade_info[3].get_attribute('innerHTML'):
                 row_pos += 1
                 continue
-
+            
             try:
                 grade_points = grade_info[1].find_elements(By.TAG_NAME, 'div')[1].get_attribute('innerText')
             except:
@@ -193,7 +193,7 @@ def fetch_grades(driver, url, course_linklist):
                     continue
                     
 
-            #print(f"==={grade_points, grade_range, grade_type}")
+            #print(f"==={grade_points, grade_range, grade_type, grade_info[5].get_attribute('innerHTML')}")
             # Grade
             if len(group_stack) == 1:
                 if grade_name in grade_json[group_stack[-1]]:

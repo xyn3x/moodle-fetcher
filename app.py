@@ -1,5 +1,6 @@
 from moodle.grade.fetcher import fetch_grades
 from moodle.syllabus.syllabus_parser import parse_syllabus
+from db.main import insert_assessments, insert_course, insert_grades
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -43,31 +44,53 @@ driver.get(url_course)
 time.sleep(4)
 
 course_linklist = []
+course_name = []
 for cur_link in driver.find_elements(By.TAG_NAME, 'a'):
     cur_href = cur_link.get_attribute('href')
     course_linkPattern = '/course/view.php?id='
     if not cur_href:
         continue
     if course_linkPattern in cur_href: 
+        needed_elements = cur_link.find_elements(By.TAG_NAME, "span")
+        for cur_element in needed_elements: 
+            if cur_element.get_attribute('title'):
+                cur_name = cur_element.get_attribute('title')
+                shrinked_name = ""
+                for cur_letter in cur_name:
+                    if cur_letter == "," or cur_letter == "-":
+                        break
+                    shrinked_name += cur_letter
+                course_name.append(shrinked_name)
+                break
         course_linklist.append(cur_href)
         
-course_linklist = list(set(course_linklist)) # Delete Duplicates
+# Delete Duplicates
+course_linklist = list(set(course_linklist))
+
+course_name = list(set(course_name))
+
+insert_course(course_name)
+
+print(course_name)
 
 if not course_linklist: 
     sys.exit("No course is found")
     
 try: 
-    grades_json = fetch_grades(driver, url, course_linklist)
+    grades_json = json.loads(fetch_grades(driver, url, course_linklist))
 except:
     sys.exit("Erorr. Can not fetch the grades.")
 
 print(grades_json)
 
-try:
-    syllabus_json = parse_syllabus(driver, url, course_linklist)    
-except:
-    sys.exit("Erorr. Can not fetch the syllabus.")
+insert_grades(grades_json)
 
+try: 
+    syllabus_json = json.loads(parse_syllabus(driver, url, course_linklist))   
+except:
+    sys.exit("Erorr. Can not fetch the grades.") 
 
 print(syllabus_json)
+insert_assessments(syllabus_json)
+
 driver.quit()
