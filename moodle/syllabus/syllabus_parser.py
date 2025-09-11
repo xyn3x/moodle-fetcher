@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 load_dotenv()
 
+# Formatting tables to strings (For course schedule) 
 def table_to_string(table):
     if not table:
         return ""
@@ -44,10 +45,15 @@ def table_to_string(table):
                 formatted_table += "|"
     return formatted_table
 
+
+# Extracting from PDF
 def extract_from_pdf(driver, pdf_url):
+    # Gettting access with cookies
     cookies = {c['name']: c['value'] for c in driver.get_cookies()}
     res = requests.get(pdf_url, cookies=cookies)
     pdf_file = BytesIO(res.content)
+
+    # Extracting the text and tables
     extracted_text = ''
     with pdfplumber.open(pdf_file) as pdf:
         for page in pdf.pages:
@@ -59,28 +65,43 @@ def extract_from_pdf(driver, pdf_url):
                 extracted_text += page.extract_text() + '\n'
     return extracted_text
 
+
+# Extracting from Docx file
 def extract_from_docx(driver, docx_url):
+    # Getting access with cookies
     cookies = {c['name']: c['value'] for c in driver.get_cookies()}
     res = requests.get(docx_url, cookies=cookies)
     docs_file = Document(BytesIO(res.content))
-    extracted_text = ''
+    
+    # Extracting the text
+    extracted_text = ""
     for pars in docs_file.paragraphs:
         if pars.text.strip():
             extracted_text += pars.text + "\n"
+
+    # Extracting tables
     for table in docs_file.tables:
         extracted_text += table_to_string(table) + "\n"
     return extracted_text
 
+# Extracting from Google Docs
 def extract_from_gdocs(driver, gdocs_url):
+    # Getting access with cookies
     cookies = {c['name']: c['value'] for c in driver.get_cookies()}
     res = requests.get(gdocs_url, cookies=cookies)
     soup = BeautifulSoup(res.text, 'html.parser')
+
+    # Delete useless stuff
     for not_text in soup(["style", "script"]):
         not_text.extract()
+    
+    # Reformatting
     soup_text = soup.get_text()
     lines = []
     for line in soup_text.splitlines():
         lines.append(line.strip())
+
+    # Extracting the text
     extracted_text = ""
     for line in lines:
         for cur_text in line.split(" "):
@@ -89,6 +110,7 @@ def extract_from_gdocs(driver, gdocs_url):
         extracted_text += "\n"
     return extracted_text
 
+# Promting Gemini
 def ask(content):
     client = genai.Client(api_key=os.getenv("genai_api"))
     response = client.models.generate_content(
@@ -102,10 +124,12 @@ def parse_syllabus(driver, url, course_linklist):
     for course_link in course_linklist: 
         driver.get(course_link)
         time.sleep(2)
+        # Finding course name
         course_name_container = driver.find_element(By.CLASS_NAME, "page-header-headings")
         course_name = course_name_container.find_element(By.XPATH, "./*[1]").get_attribute("innerHTML")
         linkcontainer_list = driver.find_elements(By.CLASS_NAME, "activityname")
         #print(linkcontainer_list)
+
         for cur_container in linkcontainer_list:
             try:
                 cur_link = cur_container.find_element(By.TAG_NAME, "a")
@@ -117,12 +141,17 @@ def parse_syllabus(driver, url, course_linklist):
             except:
                 continue
             cur_linkname = (cur_linkname.get_attribute("innerHTML")).lower()
+
+            # Checking if current link is syllabus
             if "syllabus" in cur_linkname or ("course" in cur_linkname and "manual" in cur_linkname):
+                # Sometimes link redirects not to file, but to different page with syllabus file
                 try:
                     url = cur_link.get_attribute("href")
+                    # Checking if our link redirect to Google docs
                     if "docs" in url:
                         content = extract_from_gdocs(driver, url)
                     else:
+                        #Checking if our redirect to PDF file
                         try:
                             content = extract_from_pdf(driver, url)
                         except:
@@ -132,6 +161,7 @@ def parse_syllabus(driver, url, course_linklist):
                     response = json.loads(response)
                     syllabus_json.update({course_name : response})
                 except: 
+                    # If it redirects to another page, then we should find another link with syllabus
                     driver.get(cur_link.get_attribute("href"))
                     try:
                         link_list = driver.find_elements(By.TAG_NAME, "a")
@@ -141,9 +171,11 @@ def parse_syllabus(driver, url, course_linklist):
                         cur_linkname = (cur_link.get_attribute("innerHTML")).lower()
                         if "syllabus" in cur_linkname or ("course" in cur_linkname and "manual" in cur_linkname):
                             url = cur_link.get_attribute("href")
+                            # Checking if our link redirect to Google docs
                             if "docs" in url:
                                 content = extract_from_gdocs(driver, url)
                             else:
+                                #Checking if our redirect to PDF file
                                 try:
                                     content = extract_from_pdf(driver, url)
                                 except Exception:

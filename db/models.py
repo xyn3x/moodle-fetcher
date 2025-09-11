@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from .db_connection import Base
 
+# 3 tables: Courses, Assessments (Syllabus), and current Grades
 class Course(Base):
     __tablename__ = "courses"
     id = db.Column(db.Integer, primary_key=True)

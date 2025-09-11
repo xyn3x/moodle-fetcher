@@ -39,6 +39,7 @@ time.sleep(5)
 # Check if It's Successful
 if driver.current_url != url_my: 
     sys.exit("Error occured. Wrong username or/and password.")
+
 # Fetching course list
 driver.get(url_course)
 time.sleep(4)
@@ -66,31 +67,36 @@ for cur_link in driver.find_elements(By.TAG_NAME, 'a'):
         
 # Delete Duplicates
 course_linklist = list(set(course_linklist))
-
 course_name = list(set(course_name))
 
-insert_course(course_name)
-
-print(course_name)
+#print(course_name)
 
 if not course_linklist: 
     sys.exit("No course is found")
-    
+
+# Insert courses to DB
+insert_course(course_name)
+
+# Trying to fetch the grades
 try: 
     grades_json = json.loads(fetch_grades(driver, url, course_linklist))
 except:
     sys.exit("Erorr. Can not fetch the grades.")
 
-print(grades_json)
+#print(grades_json)
 
+# Insert grades to DB
 insert_grades(grades_json)
 
+# Trying to parse assessments from syllabus
 try: 
     syllabus_json = json.loads(parse_syllabus(driver, url, course_linklist))   
 except:
     sys.exit("Erorr. Can not fetch the grades.") 
 
-print(syllabus_json)
+#print(syllabus_json)
+
+# Insert assessments to DB
 insert_assessments(syllabus_json)
 
 driver.quit()
