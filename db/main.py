@@ -115,3 +115,16 @@ def insert_assessments(syllabus_json):
             if not amount: 
                 continue
             add_assessment(course_name, name, weight, amount, date)
+
+def get_assessments(course_name):
+    course = session.query(Course).filter_by(name = course_name).first()
+    if not course: 
+        return "No course found."
+    return course.assessments
+
+
+def get_grades(course_name):
+    course = session.query(Course).filter_by(name = course_name).first()
+    if not course: 
+        return "No course found."
+    return course.grades

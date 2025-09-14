@@ -9,10 +9,10 @@ This platform is not convenient for me at all. You need to log in every time you
 - Easy-to-use bot in Telegram (? Future)
 - Moodle authorization and data fetching
 - Syllabus parsing
-- Deadline notifications (? Future)
+- Deadline notifications (Not finished)
 - Course grade analysis via graphs and statistics. (Not finished)
 - Grade prediction based on current grades and assessment weights. (Not finished)
-- Data storing in DB (Not finished)
+- Data storing in DB.
 - You can run this script in your computer via Docker (Only for NU Kazakhstan students)
 - Auto updating data 
 

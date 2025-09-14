@@ -29,7 +29,7 @@ class Grade(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
-    value = db.Column(db.Integer, nullable=False)
+    value = db.Column(db.Double, nullable=False)
     last_update = db.Column(db.DateTime, default=datetime.utcnow)
 
     course = dbo.relationship("Course", back_populates="grades")

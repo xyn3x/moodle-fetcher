@@ -1,6 +1,8 @@
 from moodle.grade.fetcher import fetch_grades
 from moodle.syllabus.syllabus_parser import parse_syllabus
-from db.main import insert_assessments, insert_course, insert_grades
+from db.main import insert_assessments, insert_course, insert_grades, get_assessments, get_grades
+from db.models import Assessment, Grade
+from statistics.app import calculate
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -68,7 +70,7 @@ for cur_link in driver.find_elements(By.TAG_NAME, 'a'):
 # Delete Duplicates
 course_linklist = list(set(course_linklist))
 course_name = list(set(course_name))
-
+"""
 #print(course_name)
 
 if not course_linklist: 
@@ -98,5 +100,13 @@ except:
 
 # Insert assessments to DB
 insert_assessments(syllabus_json)
-
+"""
 driver.quit()
+
+for cur_course in course_name: 
+    cur_assessments = get_assessments(cur_course)
+    cur_grades = get_grades(cur_course)
+    print(f"Course name: {cur_course}")
+    print(cur_assessments)
+    
+    
