@@ -3,7 +3,6 @@ version: "3.8"
 services:
   db:
     image: postgres:latest
-    restart: on-failure
     container_name: moodle_db
     env_file:
       - .env 
@@ -28,11 +27,10 @@ services:
     depends_on:
       - db
       - selenium
-    env_file:
-      - .env
-    command: ["python", "app.py"]
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
       - SELENIUM_URL=http://selenium:4444/wd/hub
 volumes:
