@@ -4,8 +4,6 @@
 .vscode/
 
 .DS_Store*
-LICENSE
-README.md
 __pycache__/
 *.py[cod]
 *$py.class

@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:latest
+    restart: on-failure
+    container_name: moodle_db
+    env_file:
+      - .env 
+    ports:
+      - "5432:5432"
+  selenium:
+    image: selenium/standalone-chrome:4.15.0
+    restart: on-failure
+    platform: linux/amd64
+    ports:
+      - "4444:4444"
+    shm_size: 2gb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  app:
+    build: .
+    container_name: moodle_app
+    restart: on-failure
+    depends_on:
+      - db
+      - selenium
+    env_file:
+      - .env
+    command: ["python", "app.py"]
+    volumes:
+      - .:/app
+    environment:
+      - SELENIUM_URL=http://selenium:4444/wd/hub
+volumes:
+  postgres_data:

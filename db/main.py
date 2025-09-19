@@ -76,10 +76,6 @@ def add_grade(course_name, name, value):
     
     # If exists
     if grade:
-        # If nothing changed, then return
-        if grade.value == cur_grade.value:
-            return
-        
         # Otherwise update
         grade.value = cur_grade.value
     else:
@@ -100,7 +96,8 @@ def insert_grades(grades_json):
             grade = grades_json[course_name][name]["grade"]
             range = grades_json[course_name][name]["range"]
             # Calculate value (<= 100%)
-            value = grade * 100.0 / range
+            value = grade * 100.0 / (range * 1.0)
+            print(value)
             add_grade(course_name, name, value)
 
 

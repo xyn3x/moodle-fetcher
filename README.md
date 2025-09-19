@@ -28,7 +28,7 @@ Syllabus: pdfplumber, docx, BeautifulSoup
 Bot platform: Telegram (Telegram API) (? Future)
 DB: (PostgreSQL)
 Statistics: matplotlib, numpy (Not finished)
-Other: cron (Not finished), Docker (Not finished)
+Other: cron (Not finished), Docker
 ```
 
 ## Architecture
