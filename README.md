@@ -11,7 +11,7 @@ This platform is not convenient for me at all. You need to log in every time you
 - Syllabus parsing
 - Deadline notifications (Not finished)
 - Course grade analysis via graphs and statistics. (Not finished)
-- Grade prediction based on current grades and assessment weights. (Not finished)
+- Grade prediction based on current grades and assessment weights.
 - Data storing in DB.
 - You can run this script in your computer via Docker (Only for NU Kazakhstan students)
 - Auto updating data 
@@ -28,7 +28,7 @@ Syllabus: pdfplumber, docx, BeautifulSoup
 Bot platform: Telegram (Telegram API) (? Future)
 DB: (PostgreSQL)
 Statistics: matplotlib, numpy (Not finished)
-Other: cron (Not finished), Docker
+Other: cron, Docker
 ```
 
 ## Architecture
